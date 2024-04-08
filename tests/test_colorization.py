@@ -105,7 +105,7 @@ class TestColorization(unittest.TestCase):
             f'Test error message'
             f'{Colorization.RESET}'
         ) if Colorization.is_colorization_supported() else (
-            f'Test error message'
+            'Test error message'
         )
         self.assertEqual(Colorization.colorize_message('Test error message'), expected_output)
 
@@ -114,7 +114,7 @@ class TestColorization(unittest.TestCase):
             f'Test warning message'
             f'{Colorization.RESET}'
         ) if Colorization.is_colorization_supported() else (
-            f'Test warning message'
+            'Test warning message'
         )
         self.assertEqual(Colorization.colorize_message('Test warning message'), expected_output)
 

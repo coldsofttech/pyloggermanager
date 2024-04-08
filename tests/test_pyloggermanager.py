@@ -39,7 +39,7 @@ class TestPyLoggerManager(unittest.TestCase):
         if self.logger is not None:
             for handler in self.logger.handlers:
                 handler.close()
-                if type(handler) == FileHandler:
+                if handler is FileHandler:
                     try:
                         file_name = str(handler.filename)
                         os.remove(file_name)

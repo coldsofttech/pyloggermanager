@@ -111,7 +111,7 @@ class Formatter:
 
         self._format_str = value
 
-    def format(self, record: 'Record') -> str:
+    def format(self, record) -> str:
         """
         Formats the log record into a string based on the provided record object.
 
@@ -172,7 +172,7 @@ class Formatter:
         else:
             return ''
 
-    def _log_attributes(self, record: 'Record', date_format: str) -> dict:
+    def _log_attributes(self, record, date_format: str) -> dict:
         """
         Extracts and organizes various attributes of a 'Record' object into a dictionary format.
 
@@ -226,7 +226,7 @@ class DefaultFormatter(Formatter):
 
         super().__init__(format_str, date_format)
 
-    def format(self, record: 'Record') -> str:
+    def format(self, record) -> str:
         """
         Formats the given log record according to the format string.
 
@@ -293,7 +293,7 @@ class CSVFormatter(Formatter):
         """
         return len(format_str.split(',')) >= 2
 
-    def format(self, record: 'Record') -> str:
+    def format(self, record) -> str:
         """
         Formats the given log record into a CSV string based on the specified format string.
 
@@ -356,7 +356,7 @@ class JSONFormatter(Formatter):
         except ValueError:
             raise ValueError("Invalid JSON format string.")
 
-    def format(self, record: 'Record') -> str:
+    def format(self, record) -> str:
         """
         Formats the given log record into a JSON string.
 

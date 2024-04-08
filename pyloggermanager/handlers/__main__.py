@@ -44,7 +44,7 @@ class Handler:
             self,
             name: str = None,
             level: int = 20,
-            colorization: 'Colorization' = None,
+            colorization=None,
             formatter: Formatter = DefaultFormatter()
     ) -> None:
         """
@@ -79,7 +79,7 @@ class Handler:
             self._release_lock()
 
     @property
-    def colorization(self) -> 'Colorization':
+    def colorization(self):
         """
         Gets the colorization object for the handler.
 
@@ -88,7 +88,7 @@ class Handler:
         return self._colorization
 
     @colorization.setter
-    def colorization(self, value: 'Colorization') -> None:
+    def colorization(self, value) -> None:
         """
         Sets the colorization object for the handler.
 
@@ -199,7 +199,7 @@ class Handler:
         finally:
             self._release_lock()
 
-    def emit(self, record: 'Record', ignore_display: bool) -> None:
+    def emit(self, record, ignore_display: bool) -> None:
         """
         Abstract method to emit a log record.
 
@@ -208,7 +208,7 @@ class Handler:
         """
         raise NotImplementedError('emit() method must be implemented in subclasses.')
 
-    def format(self, record: 'Record') -> str:
+    def format(self, record) -> str:
         """
         Formats a log record using the handler's formatter.
 
@@ -232,7 +232,7 @@ class Handler:
         """
         return _handlersList
 
-    def handle(self, record: 'Record', ignore_display: bool) -> None:
+    def handle(self, record, ignore_display: bool) -> None:
         """
         Handles a log record.
 
@@ -262,7 +262,7 @@ class ConsoleHandler(Handler):
             self,
             name: str = None,
             level: int = 20,
-            colorization: 'Colorization' = None,
+            colorization=None,
             formatter: Formatter = DefaultFormatter(),
             stream: Stream = TerminalStream()
     ) -> None:
@@ -317,7 +317,7 @@ class ConsoleHandler(Handler):
             self._stream.close()
         super().close()
 
-    def emit(self, record: 'Record', ignore_display: bool = True) -> None:
+    def emit(self, record, ignore_display: bool = True) -> None:
         """
         Emits the log record by formatting it, colorizing the message, and writing it to the stream.
 
@@ -356,7 +356,7 @@ class StreamHandler(Handler):
             self,
             name: str = None,
             level: int = 20,
-            colorization: 'Colorization' = None,
+            colorization=None,
             formatter: Formatter = DefaultFormatter(),
             stream: Stream = StdoutStream()
     ) -> None:
@@ -416,7 +416,7 @@ class StreamHandler(Handler):
             self._stream.close()
         super().close()
 
-    def emit(self, record: 'Record', ignore_display: bool) -> None:
+    def emit(self, record, ignore_display: bool) -> None:
         """
         Emits a log record to the stream.
 
@@ -461,7 +461,7 @@ class FileHandler(Handler):
             self,
             name: str = None,
             level: int = 20,
-            colorization: 'Colorization' = None,
+            colorization=None,
             formatter: Formatter = DefaultFormatter(),
             file_name: str = 'default.log',
             file_mode: str = 'a',
@@ -596,7 +596,7 @@ class FileHandler(Handler):
         self._close_file_stream()
         super().close()
 
-    def emit(self, record: 'Record', ignore_display: bool) -> None:
+    def emit(self, record, ignore_display: bool) -> None:
         """
         Emits a log record by writing it to the log file.
 
