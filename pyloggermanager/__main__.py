@@ -187,7 +187,7 @@ class Colorization:
         if term is None:
             return False
 
-        if 'color' in os.popen(f'tput colors').read():
+        if 'color' in os.popen('tput colors').read():
             return True
 
         try:

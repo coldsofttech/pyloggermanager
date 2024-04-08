@@ -242,7 +242,7 @@ class TestHandler(unittest.TestCase):
 
     def test_get_handlers_valid(self):
         """Test if the get handlers returns expected values."""
-        handler = Handler()
+        Handler()
         assert len(Handler.get_handlers()) > 0
 
     def test_handle_valid(self):

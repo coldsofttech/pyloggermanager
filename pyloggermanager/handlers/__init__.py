@@ -28,11 +28,11 @@ __all__ = [
 __name__ = "pyloggermanager.handlers"
 __description__ = """
 The pyloggermanager.handlers package provides classes responsible for handling log records
-generated within the logger manager framework. It includes various handlers for processing log 
+generated within the logger manager framework. It includes various handlers for processing log
 messages, directing them to different destinations, and performing actions based on logging levels.
 
 Below listed handler classes offer flexibility and customization options for managing log records
-within the logger manager framework. They enable users to define how log messages are processed, 
+within the logger manager framework. They enable users to define how log messages are processed,
 where they are directed, and how they are formatted, catering to various logging scenarios and
 deployment environments.
 
