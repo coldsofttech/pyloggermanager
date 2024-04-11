@@ -31,14 +31,14 @@ jobs:
 
       - name: Run Lint
         run: |
-          flake8 --verbose --color auto --count --statistics --format=json --output-file=flake8-report.json
+          flake8 --verbose --color auto --count --statistics --format=default --output-file=flake8-report
 
       - name: Upload Report
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: lint-report-${{ matrix.python-version }}-${{ matrix.os }}
-          path: flake8-report.json
+          path: flake8-report
 
   test:
     name: Test
