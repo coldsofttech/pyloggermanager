@@ -21,7 +21,7 @@ robust logging solutions, ensuring efficient and resilient application performan
 Logger Manager can be installed using pip:
 
 ```bash
-pip install git+https://github.com/coldsofttech/pyloggermanager.git
+pip install pyloggermanager
 ```
 
 ## Usage
