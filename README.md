@@ -124,50 +124,6 @@ some_function()
 # Caller Path: /path/to/example.py
 ````
 
-### `Colorization`
-
-The Colorization class provides functionality to colorize messages based on specified keywords and associated
-colorization options. It supports setting keyword-color mappings, retrieving mappings, checking if colorization is
-supported, and colorizing messages.
-
-#### Attributes
-
-- `RESET`: Represents the reset sequence to revert color and style changes.
-
-#### Methods
-
-- `colorize_message(message: str) -> str`: Colorizes the provided message based on keyword-color mappings.
-- `get_keyword_color_mapping(name: str) -> dict`: Retrieves the colorization mapping for the specified keyword.
-- `get_keyword_color_mappings() -> dict`: Retrieves all keyword-color mappings.
-- `is_colorization_supported() -> bool`: Checks if colorization is supported based on the current environment.
-- `is_valid_mapping(name: str) -> bool`: Checks if the specified keyword has a valid colorization mapping.
-- `remove_keyword_color_mapping(name: str) -> None`: Removes the colorization mapping for the specified keyword.
-- `set_keyword_color_mapping(name: str, keywords: str | list[str], text_color: Optional[str] = None, text_background_color: Optional[str] = None, text_effect: Optional[str] = None) -> None`:
-  Sets the colorization mapping for the specified keyword.
-
-#### Usage
-
-````python
-# Import the Colorization class
-import pyloggermanager
-from pyloggermanager.textstyles import TextColor
-
-# Set up colorization mappings
-pyloggermanager.Colorization.set_keyword_color_mapping(
-    name='ERROR',
-    keywords=['error', 'exception'],
-    text_color=TextColor.RED
-)
-
-# Colorize a message
-message = 'An error occurred!'
-colorized_message = pyloggermanager.Colorization.colorize_message(message)
-print(colorized_message)
-
-# Output
-# An error occurred!
-````
-
 ### `FileMode`
 
 The FileMode class represents file modes supported by the Python open() function for reading, writing, and appending to
@@ -847,7 +803,7 @@ list of all handlers.
 
 #### Methods
 
-- `__init__(name: str = None, level: int = 20, colorization: 'Colorization' = None, formatter: Formatter = DefaultFormatter())` -
+- `__init__(name: str = None, level: int = 20, colorization: pycolorecho.ColorMapper = None, formatter: Formatter = DefaultFormatter())` -
   Initializes the handler with optional attributes.
 - `close()`: Closes the handler.
 - `emit(record: 'Record', ignore_display: bool) -> None`: Abstract method to emit a log record.
@@ -885,7 +841,7 @@ stream.
 
 #### Methods
 
-- `__init__(name: str = None, level: int = 20, colorization: 'Colorization' = None, formatter: Formatter = DefaultFormatter(), stream: Stream = TerminalStream())` -
+- `__init__(name: str = None, level: int = 20, colorization: pycolorecho.ColorMapper = None, formatter: Formatter = DefaultFormatter(), stream: Stream = TerminalStream())` -
   Initializes a ConsoleHandler instance with optional attributes
 - `close()`: Closes the stream if it has a close method.
 - `emit(record: 'Record', ignore_display: bool = True) -> None`: Emits the log record by formatting it, colorizing the
@@ -927,7 +883,7 @@ methods to set the log level, formatter, and stream, as well as to emit log reco
 
 #### Methods
 
-- `__init__(name: str = None, level: int = 20, colorization: 'Colorization' = None, formatter: Formatter = DefaultFormatter(), stream: Stream = StdoutStream())` -
+- `__init__(name: str = None, level: int = 20, colorization: pycolorecho.ColorMapper = None, formatter: Formatter = DefaultFormatter(), stream: Stream = StdoutStream())` -
   Initializes a StreamHandler instance with optional attributes.
 - `close()`: Closes the stream if it has a close method.
 - `emit(record: 'Record', ignore_display: bool) -> None`: Emits a log record to the stream.
@@ -970,7 +926,7 @@ customization of various parameters such as file name, file mode, encoding, etc.
 
 #### Methods
 
-- `__init__(name: str = None, level: int = 20, colorization: 'Colorization' = None, formatter: Formatter = DefaultFormatter(), file_name: str = 'default.log', file_mode: str = 'a', encoding: str = 'UTF-8')` -
+- `__init__(name: str = None, level: int = 20, colorization: pycolorecho.ColorMapper = None, formatter: Formatter = DefaultFormatter(), file_name: str = 'default.log', file_mode: str = 'a', encoding: str = 'UTF-8')` -
   Initializes a FileHandler object with optional attributes.
 - `close()`: Closes the file stream used for writing log records.
 - `emit(record: 'Record', ignore_display: bool) -> None`: Emits a log record by writing it to the log file.
@@ -1125,183 +1081,17 @@ terminal_stream.flush()
 # This is a message to the terminal
 ````
 
-## `pyloggermanager.textstyles`
+# Text Styles
 
-The 'pyloggermanager.textstyles' package provides utilities for defining and applying text styles to log messages within
-the logger manager framework. It includes classes for specifying text colors, background colors, and text effects,
-allowing users to customize the appearance of log messages according to their preferences.
+For text colorization and styling, this package utilizes the `pycolorecho` package. You can find additional details
+about its usage and features by following this
+link: [pycolorecho](https://github.com/coldsofttech/pycolorecho/blob/main/README.md) package.
 
-This package is designed to enhance the visual representation of log messages by providing a flexible and intuitive way
-to apply various text styles. By incorporating these text styles into log messages, users can improve readability,
-emphasize important information, and differentiate between different types of log entries.
+# License
 
-Overall, the 'pyloggermanager.textstyles' package complements the logger manager framework by offering tools for
-creating visually appealing and informative log messages, contributing to a more effective logging experience.
+Please refer to the [MIT license](LICENSE) within the project for more information.
 
-### TextBackgroundColor
+# Contributing
 
-The TextBackgroundColor class represents text background color for styling console text. It provides methods to add
-custom colors, retrieve color mappings, get color codes, and check if a color is valid.
-
-#### Attributes
-
-| Color                                                            | Name            | Description                                   |
-|------------------------------------------------------------------|-----------------|-----------------------------------------------|
-| [![Black](https://via.placeholder.com/15x15/000000?text=+)](#)   | `BLACK` (str)   | Constant representing the black color code.   |
-| [![Red](https://via.placeholder.com/15x15/FF0000?text=+)](#)     | `RED` (str)     | Constant representing the red color code.     |
-| [![Green](https://via.placeholder.com/15x15/00FF00?text=+)](#)   | `GREEN` (str)   | Constant representing the green color code.   |
-| [![Yellow](https://via.placeholder.com/15x15/FFFF00?text=+)](#)  | `YELLOW` (str)  | Constant representing the yellow color code.  |
-| [![Blue](https://via.placeholder.com/15x15/0000FF?text=+)](#)    | `BLUE` (str)    | Constant representing the blue color code.    |
-| [![Magenta](https://via.placeholder.com/15x15/FF00FF?text=+)](#) | `MAGENTA` (str) | Constant representing the magenta color code. |
-| [![Cyan](https://via.placeholder.com/15x15/00FFFF?text=+)](#)    | `CYAN` (str)    | Constant representing the cyan color code.    |
-| [![White](https://via.placeholder.com/15x15/FFFFFF?text=+)](#)   | `WHITE` (str)   | Constant representing the white color code.   |
-
-#### Methods
-
-- `add_color(name: str, code: str) -> None`: Adds a custom color with the provided name and code.
-- `get_colors() -> dict`: Returns a dictionary mapping color names to their corresponding codes, sorted alphabetically.
-- `get_color(color_str: str) -> str`: Returns the color code for the provided color name or code string.
-- `is_valid_color(color: str) -> bool`: Checks if the provided color name or code is valid.
-- `remove_color(name: str) -> None`: Removes the color mapping for the specified color name.
-
-#### Usage
-
-````python
-from pyloggermanager.textstyles import TextBackgroundColor
-
-# Add a custom color
-TextBackgroundColor.add_color("CUSTOM_COLOR", "\033[48;5;200m")
-
-# Get color mappings
-color_mappings = TextBackgroundColor.get_colors()
-print(color_mappings)
-
-# Check if a color is valid
-is_valid = TextBackgroundColor.is_valid_color("YELLOW")
-print(is_valid)  # Output: True
-
-# Remove a color
-TextBackgroundColor.remove_color("CUSTOM_COLOR")
-
-# Output
-# {
-#     'BLACK': '\x1b[40m', 
-#     'BLUE': '\x1b[44m', 
-#     'CUSTOM_COLOR': '\x1b[48;5;200m', 
-#     'CYAN': '\x1b[46m', 
-#     'GREEN': '\x1b[42m', 
-#     'MAGENTA': '\x1b[45m', 
-#     'RED': '\x1b[41m', 
-#     'WHITE': '\x1b[47m', 
-#     'YELLOW': '\x1b[43m'
-# }
-````
-
-### TextColor
-
-The TextColor class represents text color for styling console text. It provides methods to add custom colors, retrieve
-color mappings, get color codes, and check if a color is valid.
-
-#### Attributes
-
-| Color                                                            | Name            | Description                                   |
-|------------------------------------------------------------------|-----------------|-----------------------------------------------|
-| [![Black](https://via.placeholder.com/15x15/000000?text=+)](#)   | `BLACK` (str)   | Constant representing the black color code.   |
-| [![Red](https://via.placeholder.com/15x15/FF0000?text=+)](#)     | `RED` (str)     | Constant representing the red color code.     |
-| [![Green](https://via.placeholder.com/15x15/00FF00?text=+)](#)   | `GREEN` (str)   | Constant representing the green color code.   |
-| [![Yellow](https://via.placeholder.com/15x15/FFFF00?text=+)](#)  | `YELLOW` (str)  | Constant representing the yellow color code.  |
-| [![Blue](https://via.placeholder.com/15x15/0000FF?text=+)](#)    | `BLUE` (str)    | Constant representing the blue color code.    |
-| [![Magenta](https://via.placeholder.com/15x15/FF00FF?text=+)](#) | `MAGENTA` (str) | Constant representing the magenta color code. |
-| [![Cyan](https://via.placeholder.com/15x15/00FFFF?text=+)](#)    | `CYAN` (str)    | Constant representing the cyan color code.    |
-| [![White](https://via.placeholder.com/15x15/FFFFFF?text=+)](#)   | `WHITE` (str)   | Constant representing the white color code.   |
-
-#### Methods
-
-- `add_color(name: str, code: str) -> None`: Adds a custom color with the provided name and code.
-- `get_colors() -> dict`: Returns a dictionary mapping color names to their corresponding codes, sorted alphabetically.
-- `get_color(color_str: str) -> str`: Returns the color code for the provided color name or code string.
-- `is_valid_color(color: str) -> bool`: Checks if the provided color name or code is valid.
-- `remove_color(name: str) -> None`: Removes the color mapping for the specified color name.
-
-#### Usage
-
-````python
-from pyloggermanager.textstyles import TextColor
-
-# Add a custom color
-TextColor.add_color("CUSTOM_COLOR", "\033[38;5;200m")
-
-# Get color mappings
-color_mappings = TextColor.get_colors()
-print(color_mappings)
-
-# Check if a color is valid
-is_valid = TextColor.is_valid_color("RED")
-print(is_valid)  # Output: True
-
-# Remove a color
-TextColor.remove_color("CUSTOM_COLOR")
-
-# Output
-# {
-#     'BLACK': '\x1b[30m', 
-#     'BLUE': '\x1b[34m',
-#     'CUSTOM_COLOR': '\x1b[38;5;200m',
-#     'CYAN': '\x1b[36m',
-#     'GREEN': '\x1b[32m', 
-#     'MAGENTA': '\x1b[35m',
-#     'RED': '\x1b[31m',
-#     'WHITE': '\x1b[37m', 
-#     'YELLOW': '\x1b[33m'
-# }
-````
-
-### TextEffect
-
-The TextEffect class represents different text effects used in text formatting, such as bold, underline, and italics. It
-provides methods to add custom text effects, get text effect mappings, check if a text effect is valid, and retrieve the
-corresponding text effect for a given string representation.
-
-#### Attributes
-
-- `BOLD` (str): Constant representing the bold text effect.
-- `UNDERLINE` (str): Constant representing the underline text effect.
-- `ITALIC` (str): Constant representing the italic text effect.
-
-#### Methods
-
-- `add_effect(name: str, code: str) -> None`: Adds a custom text effect with the provided name and code.
-- `get_effects() -> dict`: Returns a dictionary mapping text effect names to their corresponding codes, sorted
-  alphabetically.
-- `get_effect(effect_str: str) -> str`: Returns the text effect name corresponding to the given text effect code or
-  name.
-- `is_valid_effect(effect: str) -> bool`: Checks if the provided text effect is valid.
-- `remove_effect(name: str) -> None`: Removes the text effect mapping for the specified effect name.
-
-#### Usage
-
-````python
-from pyloggermanager.textstyles import TextEffect
-
-# Add a custom effect
-TextEffect.add_effect("CUSTOM_EFFECT", "\033[10m")
-
-# Get effect mappings
-effect_mappings = TextEffect.get_effects()
-print(effect_mappings)
-
-# Check if an effect is valid
-is_valid = TextEffect.is_valid_effect("BOLD")
-print(is_valid)  # Output: True
-
-# Remove an effect
-TextEffect.remove_effect("CUSTOM_EFFECT")
-
-# Output
-# {
-#     'BOLD': '\x1b[1m',
-#     'CUSTOM_EFFECT': '\x1b[10m', 
-#     'ITALIC': '\x1b[3m',
-#     'UNDERLINE': '\x1b[4m'
-# }
-````
+We welcome contributions from the community! Whether you have ideas for new features, bug fixes, or enhancements, feel
+free to open an issue or submit a pull request on [GitHub](https://github.com/coldsofttech/pyloggermanager).

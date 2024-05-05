@@ -1,3 +1,4 @@
+import os
 import random
 import string
 
@@ -15,3 +16,16 @@ class UtilityClass:
         """
         letters = string.ascii_lowercase
         return ''.join(random.choice(letters) for _ in range(length))
+
+    @staticmethod
+    def delete_file(file_name: str) -> None:
+        """
+        Deletes the specified file, if exists.
+
+        :param file_name: File path to delete.
+        :type file_name: str
+        """
+        try:
+            os.remove(file_name)
+        except (FileNotFoundError, PermissionError, IsADirectoryError):
+            pass

@@ -10,18 +10,6 @@ from utilityclass import UtilityClass
 
 
 class TestPyLoggerManagerConfig(unittest.TestCase):
-    @staticmethod
-    def cleanup(logger):
-        """Clean up method"""
-        for handler in logger.handlers:
-            handler.close()
-            if handler is FileHandler:
-                try:
-                    file_name = str(handler.filename)
-                    os.remove(file_name)
-                except (FileNotFoundError, PermissionError, IsADirectoryError):
-                    pass
-
     def setUp(self) -> None:
         self.exec_info = (ValueError, ValueError('Test error'), None)
 
@@ -85,8 +73,8 @@ class TestPyLoggerManagerConfig(unittest.TestCase):
     @pytest.mark.sequential_order
     def test_load_config_valid_file_name(self):
         """Test if load config works as expected"""
+        file_name = UtilityClass.generate_name()
         try:
-            file_name = UtilityClass.generate_name()
             pyloggermanager.load_config(
                 file_name=file_name,
                 file_mode=FileMode.APPEND,
@@ -96,7 +84,7 @@ class TestPyLoggerManagerConfig(unittest.TestCase):
             self.assertEqual('root', logger.name)
             self.assertEqual(FileHandler, type(logger.handlers[0]))
         finally:
-            self.cleanup(pyloggermanager.get_logger())
+            UtilityClass.delete_file(file_name)
 
     @pytest.mark.sequential_order
     def test_load_config_valid_no_params(self):
@@ -107,7 +95,7 @@ class TestPyLoggerManagerConfig(unittest.TestCase):
             self.assertEqual('root', logger.name)
             self.assertEqual(FileHandler, type(logger.handlers[0]))
         finally:
-            self.cleanup(pyloggermanager.get_logger())
+            UtilityClass.delete_file('default.log')
 
 
 if __name__ == "__main__":

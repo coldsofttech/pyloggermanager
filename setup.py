@@ -8,7 +8,6 @@ setup(
     packages=[
         pyloggermanager.__name__,
         pyloggermanager.formatters.__name__,
-        pyloggermanager.textstyles.__name__,
         pyloggermanager.handlers.__name__,
         pyloggermanager.streams.__name__
     ],
@@ -16,6 +15,9 @@ setup(
     license='MIT',
     author='coldsofttech',
     description=pyloggermanager.__description__,
+    install_requires=[
+        "pycolorecho"
+    ],
     requires_python=">=3.10",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
