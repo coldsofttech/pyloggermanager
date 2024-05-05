@@ -2135,7 +2135,7 @@ def _create_default_handlers(
         level: int = None,
         format_str: str = None,
         date_format: str = None,
-        colorization: 'ColorMapper' = None,
+        colorization=None,
         stream: Stream = None,
         encoding: str = None
 ) -> list:
@@ -2240,7 +2240,7 @@ def load_config(
         date_format: str = DATE_FORMAT,
         stream: Stream = None,
         handlers: list = None,
-        colorization: 'ColorMapper' = None,
+        colorization=None,
         encoding: str = 'UTF-8'
 ) -> None:
     """
