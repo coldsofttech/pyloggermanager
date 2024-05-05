@@ -11,8 +11,6 @@ from datetime import datetime
 from types import FrameType, TracebackType, NoneType
 from typing import Any, Optional, Tuple, Type, Union
 
-from pycolorecho import ColorMapper
-
 from pyloggermanager.formatters import Formatter, DefaultFormatter, DEFAULT_FORMAT, DATE_FORMAT
 from pyloggermanager.handlers import Handler, StderrHandler, FileHandler, StreamHandler
 from pyloggermanager.streams import Stream
@@ -2137,7 +2135,7 @@ def _create_default_handlers(
         level: int = None,
         format_str: str = None,
         date_format: str = None,
-        colorization: ColorMapper = None,
+        colorization: 'ColorMapper' = None,
         stream: Stream = None,
         encoding: str = None
 ) -> list:
@@ -2164,6 +2162,8 @@ def _create_default_handlers(
     :return: A list containing the default handler configured based on the provided parameters.
     :rtype: list
     """
+    from pycolorecho import ColorMapper
+
     if not isinstance(file_name, Union[str, NoneType]):
         raise TypeError('file_name should be a string.')
     elif not isinstance(file_mode, Union[str, NoneType]):
@@ -2240,7 +2240,7 @@ def load_config(
         date_format: str = DATE_FORMAT,
         stream: Stream = None,
         handlers: list = None,
-        colorization: ColorMapper = None,
+        colorization: 'ColorMapper' = None,
         encoding: str = 'UTF-8'
 ) -> None:
     """
@@ -2269,6 +2269,8 @@ def load_config(
     :type encoding: str
     :return: None
     """
+    from pycolorecho import ColorMapper
+
     if not isinstance(file_name, Union[str, NoneType]):
         raise TypeError('file_name should be a string.')
     elif not isinstance(file_mode, Union[str, NoneType]):

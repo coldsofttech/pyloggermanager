@@ -4,9 +4,6 @@ import sys
 from types import NoneType
 from typing import Any, TextIO, Union
 
-import pycolorecho
-from pycolorecho import ColorMapper
-
 import pyloggermanager
 from pyloggermanager.formatters import Formatter, DefaultFormatter
 from pyloggermanager.streams import Stream, TerminalStream, StdoutStream
@@ -42,6 +39,8 @@ class Handler:
         :param formatter: Formatter object for formatting log records.
         :type formatter: Formatter
         """
+        from pycolorecho import ColorMapper
+
         if not isinstance(name, Union[str, NoneType]):
             raise TypeError('name should be a string.')
         elif not isinstance(level, int):
@@ -77,6 +76,8 @@ class Handler:
 
         :param value: Colorization object for the handler.
         """
+        from pycolorecho import ColorMapper
+
         if not isinstance(value, Union[ColorMapper, NoneType]):
             raise TypeError('colorization should be of pycolorecho.ColorMapper type.')
 
@@ -309,6 +310,8 @@ class ConsoleHandler(Handler):
         :param ignore_display: Flag to indicate if log message should be displayed on terminal.
         :type ignore_display: bool
         """
+        import pycolorecho
+
         formatted_record = self.format(record)
         colored_message = pycolorecho.get_colorized_message_by_mappings(
             formatted_record, mappings=self.colorization
@@ -407,6 +410,8 @@ class StreamHandler(Handler):
         :param ignore_display: Flag to indicate if log message should be displayed on terminal.
         :type ignore_display: bool
         """
+        import pycolorecho
+
         formatted_record = self.format(record)
         self._stream.write(formatted_record + self.TERMINATOR)
         self.flush()
@@ -586,6 +591,8 @@ class FileHandler(Handler):
         :param ignore_display: Flag to indicate if log message should be displayed on terminal.
         :type ignore_display: bool
         """
+        import pycolorecho
+
         formatted_record = self.format(record)
         self._open_file_stream()
         self._acquire_lock()
