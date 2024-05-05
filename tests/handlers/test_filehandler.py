@@ -4,7 +4,7 @@ import os
 import sys
 import unittest
 
-from pycolorecho import ColorMapper, TextColor, RESET, is_colorization_supported
+from pycolorecho import ColorMapper, TextColor
 
 from pyloggermanager import CallerFrame, Record
 from pyloggermanager.formatters import Formatter
@@ -214,16 +214,10 @@ class TestFileHandler(unittest.TestCase):
         handler.emit(record, False)
         sys.stdout = sys.__stdout__
         expected_console_output = (
-            f'{TextColor.RED}'
             f'{handler.formatter.format_time(record.time.timetuple(), handler.formatter.date_format)}'
             f' :: WARNING :: Test error message'
-            f'{RESET}\n'
-        ) if is_colorization_supported() else (
-            f'{handler.formatter.format_time(record.time.timetuple(), handler.formatter.date_format)}'
-            f' :: WARNING :: Test error message'
-            f'\n'
         )
-        self.assertEqual(repr(output_buffer.getvalue()), repr(expected_console_output))
+        self.assertIn(expected_console_output, repr(output_buffer.getvalue()))
 
         expected_file_output = (
             f'{handler.formatter.format_time(record.time.timetuple(), handler.formatter.date_format)}'

@@ -1,7 +1,7 @@
 import unittest
 
 from pyloggermanager import RootLogger
-from tests.utilityclass import UtilityClass
+from utilityclass import UtilityClass
 
 
 class TestRootLogger(unittest.TestCase):

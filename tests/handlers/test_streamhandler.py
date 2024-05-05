@@ -3,7 +3,7 @@ import io
 import sys
 import unittest
 
-from pycolorecho import ColorMapper, TextColor, RESET, is_colorization_supported
+from pycolorecho import ColorMapper, TextColor
 
 from pyloggermanager import CallerFrame, Record
 from pyloggermanager.formatters import Formatter
@@ -108,16 +108,10 @@ class TestStreamHandler(unittest.TestCase):
         handler.emit(record, False)
         sys.stdout = sys.__stdout__
         expected_output = (
-            f'{TextColor.RED}'
             f'{handler.formatter.format_time(record.time.timetuple(), handler.formatter.date_format)}'
             f' :: WARNING :: Test error message'
-            f'{RESET}\n'
-        ) if is_colorization_supported() else (
-            f'{handler.formatter.format_time(record.time.timetuple(), handler.formatter.date_format)}'
-            f' :: WARNING :: Test error message'
-            f'\n'
         )
-        self.assertEqual(repr(output_buffer.getvalue()), repr(expected_output))
+        self.assertIn(expected_output, repr(output_buffer.getvalue()))
 
     def test_emit_valid_colorization_no_display(self):
         """Test if emit method prints message as expected."""

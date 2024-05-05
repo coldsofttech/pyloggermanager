@@ -6,7 +6,7 @@ import unittest
 import pyloggermanager
 from pyloggermanager import Logger, LogLevel
 from pyloggermanager.handlers import FileHandler
-from tests.utilityclass import UtilityClass
+from utilityclass import UtilityClass
 
 
 class TestPyLoggerManager(unittest.TestCase):

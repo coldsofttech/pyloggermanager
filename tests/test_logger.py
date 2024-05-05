@@ -7,7 +7,7 @@ import unittest
 from pyloggermanager import Logger, Manager, CallerFrame, Record
 from pyloggermanager.formatters import DefaultFormatter
 from pyloggermanager.handlers import FileHandler
-from tests.utilityclass import UtilityClass
+from utilityclass import UtilityClass
 
 
 class TestLogger(unittest.TestCase):
