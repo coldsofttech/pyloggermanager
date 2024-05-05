@@ -2,10 +2,11 @@ import inspect
 import json
 import unittest
 
-from pyloggermanager import Colorization, CallerFrame, Record
+from pycolorecho import ColorMapper, TextColor
+
+from pyloggermanager import CallerFrame, Record
 from pyloggermanager.formatters import Formatter, JSONFormatter
 from pyloggermanager.handlers import Handler
-from pyloggermanager.textstyles import TextColor
 
 
 class TestHandler(unittest.TestCase):
@@ -66,8 +67,8 @@ class TestHandler(unittest.TestCase):
 
     def test_init_colorization_valid(self):
         """Test if init method is initialized with valid colorization."""
-        colorization = Colorization()
-        colorization.set_keyword_color_mapping('error', ['error'], TextColor.RED)
+        colorization = ColorMapper()
+        colorization.add_mapping('error', ['error'], text_color=TextColor.RED)
         handler = Handler(colorization=colorization)
         expected_name = None
         expected_level = 20
@@ -102,8 +103,8 @@ class TestHandler(unittest.TestCase):
     def test_colorization_property_valid(self):
         """Test if colorization property returns expected value."""
         handler = Handler()
-        colorization = Colorization()
-        colorization.set_keyword_color_mapping('error', ['error'], TextColor.RED)
+        colorization = ColorMapper()
+        colorization.add_mapping('error', ['error'], text_color=TextColor.RED)
         handler.colorization = colorization
         self.assertEqual(handler.colorization, colorization)
 

@@ -35,16 +35,18 @@ class Handler:
         :param level: Handler log level.
         :type level: int
         :param colorization: Colorization object for the handler.
-        :type colorization: Colorization
+        :type colorization: pycolorecho.ColorMapper
         :param formatter: Formatter object for formatting log records.
         :type formatter: Formatter
         """
+        from pycolorecho import ColorMapper
+
         if not isinstance(name, Union[str, NoneType]):
             raise TypeError('name should be a string.')
         elif not isinstance(level, int):
             raise TypeError('level should be an integer.')
-        elif not isinstance(colorization, Union[pyloggermanager.Colorization, NoneType]):
-            raise TypeError('colorization should be of Colorization type.')
+        elif not isinstance(colorization, Union[ColorMapper, NoneType]):
+            raise TypeError('colorization should be of pycolorecho.ColorMapper type.')
         elif not issubclass(type(formatter), Formatter):
             raise TypeError('formatter should be subclass of Formatter.')
 
@@ -74,8 +76,10 @@ class Handler:
 
         :param value: Colorization object for the handler.
         """
-        if not isinstance(value, Union[pyloggermanager.Colorization, NoneType]):
-            raise TypeError('colorization should be of Colorization type.')
+        from pycolorecho import ColorMapper
+
+        if not isinstance(value, Union[ColorMapper, NoneType]):
+            raise TypeError('colorization should be of pycolorecho.ColorMapper type.')
 
         self._colorization = value
 
@@ -254,7 +258,7 @@ class ConsoleHandler(Handler):
         :param level: Handler log level.
         :type level: int
         :param colorization: Colorization object for the handler.
-        :type colorization: Colorization
+        :type colorization: pycolorecho.ColorMapper
         :param formatter: Formatter object for formatting log records.
         :type formatter: Formatter
         :param stream: Stream object for the handler.
@@ -306,11 +310,12 @@ class ConsoleHandler(Handler):
         :param ignore_display: Flag to indicate if log message should be displayed on terminal.
         :type ignore_display: bool
         """
+        import pycolorecho
+
         formatted_record = self.format(record)
-        colored_message = (
-            self.colorization.colorize_message(formatted_record)
-            if self.colorization is not None else formatted_record
-        )
+        colored_message = pycolorecho.get_colorized_message_by_mappings(
+            formatted_record, mappings=self.colorization
+        ) if self.colorization else formatted_record
         self._stream.write(colored_message)
 
     def flush(self) -> None:
@@ -348,7 +353,7 @@ class StreamHandler(Handler):
         :param level: Handler log level.
         :type level: int
         :param colorization: Colorization object for the handler.
-        :type colorization: Colorization
+        :type colorization: pycolorecho.ColorMapper
         :param formatter: Formatter object for formatting log records.
         :type formatter: Formatter
         :param stream: Stream object for the handler.
@@ -405,15 +410,16 @@ class StreamHandler(Handler):
         :param ignore_display: Flag to indicate if log message should be displayed on terminal.
         :type ignore_display: bool
         """
+        import pycolorecho
+
         formatted_record = self.format(record)
         self._stream.write(formatted_record + self.TERMINATOR)
         self.flush()
 
         if not ignore_display:
-            colored_message = (
-                self.colorization.colorize_message(formatted_record)
-                if self.colorization is not None else formatted_record
-            )
+            colored_message = pycolorecho.get_colorized_message_by_mappings(
+                formatted_record, mappings=self.colorization
+            ) if self.colorization else formatted_record
             print(colored_message)
 
     def flush(self) -> None:
@@ -455,7 +461,7 @@ class FileHandler(Handler):
         :param level: Handler log level.
         :type level: int | LogLevel
         :param colorization: Colorization object for the handler.
-        :type colorization: Colorization
+        :type colorization: pycolorecho.ColorMapper
         :param formatter: Formatter object for formatting log records.
         :type formatter: Formatter
         :param file_name: Name of the log file. Defaults to 'default.log'.
@@ -585,6 +591,8 @@ class FileHandler(Handler):
         :param ignore_display: Flag to indicate if log message should be displayed on terminal.
         :type ignore_display: bool
         """
+        import pycolorecho
+
         formatted_record = self.format(record)
         self._open_file_stream()
         self._acquire_lock()
@@ -596,10 +604,9 @@ class FileHandler(Handler):
             self._close_file_stream()
 
         if not ignore_display:
-            colored_message = (
-                self.colorization.colorize_message(formatted_record)
-                if self.colorization is not None else formatted_record
-            )
+            colored_message = pycolorecho.get_colorized_message_by_mappings(
+                formatted_record, mappings=self.colorization
+            ) if self.colorization else formatted_record
             print(colored_message)
 
     def flush(self) -> None:

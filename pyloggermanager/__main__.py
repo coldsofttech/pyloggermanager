@@ -3,7 +3,6 @@ import io
 import json
 import os
 import random
-import re
 import string
 import sys
 import threading
@@ -15,7 +14,6 @@ from typing import Any, Optional, Tuple, Type, Union
 from pyloggermanager.formatters import Formatter, DefaultFormatter, DEFAULT_FORMAT, DATE_FORMAT
 from pyloggermanager.handlers import Handler, StderrHandler, FileHandler, StreamHandler
 from pyloggermanager.streams import Stream
-from pyloggermanager.textstyles import TextColor, TextBackgroundColor, TextEffect
 
 
 class CallerFrame:
@@ -63,230 +61,6 @@ class CallerFrame:
             frame = frame.f_back
 
         return caller_frame
-
-
-class Colorization:
-    """
-    This class provides functionality to colorize messages based on specified
-    keywords and associated colorization options. It supports setting keyword-color
-    mappings, retrieving mappings, checking if colorization is supported, and
-    colorizing messages.
-    """
-
-    RESET: str = "\033[0m"  # Reset sequence to revert color and style changes
-
-    _KEYWORDS = 'keywords'
-    _COLORIZATION = 'colorization'
-    _TEXT_COLOR = 'text_color'
-    _TEXT_BACKGROUND_COLOR = 'text_background_color'
-    _TEXT_EFFECT = 'text_effect'
-
-    # Dictionary containing keyword-color mappings
-    _mappings = {}
-
-    @classmethod
-    def colorize_message(cls, message: str) -> str:
-        """
-        Colorizes the provided message based on keyword-color mappings.
-
-        :param message: The message to be colorized
-        :type message: str
-        :return: The colorized message
-        :rtype: str
-        """
-        if not isinstance(message, str):
-            raise TypeError('message should be a string.')
-
-        if not cls.is_colorization_supported() or not cls._mappings:
-            return message
-
-        colorized_message = message
-
-        for key, value in cls._mappings.items():
-            keywords = value.get(cls._KEYWORDS, [])
-            colorization = value.get(cls._COLORIZATION, {})
-
-            for keyword_pattern in keywords:
-                if re.search(keyword_pattern, message, re.IGNORECASE):
-                    text_color = colorization.get(cls._TEXT_COLOR, '')
-                    text_background_color = colorization.get(cls._TEXT_BACKGROUND_COLOR, '')
-                    text_effect = colorization.get(cls._TEXT_EFFECT, '')
-                    colorized_sequence = (
-                        f'{text_color if text_color is not None else ""}'
-                        f'{text_background_color if text_background_color is not None else ""}'
-                        f'{text_effect if text_effect is not None else ""}'
-                    )
-                    colorized_message = f'{colorized_sequence}{colorized_message}{cls.RESET}'
-
-        return colorized_message
-
-    @classmethod
-    def get_keyword_color_mapping(cls, name: str) -> dict:
-        """
-        Retrieves the colorization mapping for the specified keyword.
-
-        :param name: The name of the keyword
-        :type name: str
-        :return: The colorization mapping for the keyword
-        :rtype: dict
-        """
-        if not isinstance(name, str):
-            raise TypeError('name should be a string.')
-
-        result = cls._mappings.get(name.upper())
-        if result is None:
-            raise ValueError(f'Mapping "{name}" is not a valid value.')
-        return result
-
-    @classmethod
-    def get_keyword_color_mappings(cls) -> dict:
-        """
-        Retrieves all keyword-color mappings.
-
-        :return: All keyword-color mappings
-        :rtype: dict
-        """
-        return dict(sorted(cls._mappings.items()))
-
-    @classmethod
-    def is_colorization_supported(cls) -> bool:
-        """
-        Checks if colorization is supported based on the current environment.
-
-        :return: True if colorization is supported, False otherwise
-        :rtype: bool
-        """
-        file_name = 'lm_color.temp'
-        # Check for Windows operating systems
-        if sys.platform == 'win32':
-            major, minor = sys.getwindowsversion().major, sys.getwindowsversion().minor
-            return major > 10 or (major == 10 and minor >= 0)
-
-        # Check for Linux-based operating systems
-        term = os.environ.get('TERM')
-        if term is None:
-            return False
-
-        if 'color' in os.popen('tput colors').read():
-            return True
-
-        try:
-            with open(file_name, 'w') as f:
-                os.system('tput setaf 1', stdout=f, stderr=f)
-                os.system('tput setab 0', stdout=f, stderr=f)
-                os.system('echo -n "\033[1;31m"', stdout=f, stderr=f)
-                os.system('echo -n "\033[0m', stdout=f, stderr=f)
-
-            with open(file_name, 'r') as f:
-                content = f.read()
-                return '\033[1;31m' in content
-        finally:
-            os.remove(file_name)
-
-    @classmethod
-    def is_valid_mapping(cls, name: str) -> bool:
-        """
-        Checks if the specified keyword has a valid colorization mapping.
-
-        :param name: The name of the keyword
-        :type name: str
-        :return: True if the mapping is valid, False otherwise
-        :rtype: bool
-        """
-        if not isinstance(name, str):
-            raise TypeError('name should be a string.')
-
-        try:
-            return cls.get_keyword_color_mapping(name) is not None
-        except ValueError:
-            return False
-
-    @classmethod
-    def remove_keyword_color_mapping(cls, name: str) -> None:
-        """
-        Removes the colorization mapping for the specified keyword.
-
-        :param name: The name of the keyword to remove
-        :type name: str
-        :return: None
-        """
-        if not isinstance(name, str):
-            raise TypeError('name should be a string.')
-
-        name_upper = name.upper()
-        if name_upper in cls._mappings:
-            del cls._mappings[name_upper]
-        else:
-            raise ValueError(f'No mapping found for keyword "{name}".')
-
-    @classmethod
-    def set_keyword_color_mapping(
-            cls,
-            name: str,
-            keywords: str | list[str],
-            text_color: Optional[str] = None,
-            text_background_color: Optional[str] = None,
-            text_effect: Optional[str] = None
-    ) -> None:
-        """
-        Sets the colorization mapping for the specified keyword.
-
-        :param name: The name of the keyword
-        :type name: str
-        :param keywords: The keyword(s) to be associated with the mapping
-        :type keywords: str | list[str]
-        :param text_color: The text color for the mapping (optional)
-        :type text_color: str
-        :param text_background_color: The text background color for the mapping (optional)
-        :type text_background_color: str
-        :param text_effect: The text effect for the mapping (optional)
-        :type text_effect: str
-        :return: None
-        """
-        if not isinstance(name, str):
-            raise TypeError('name should be a string.')
-        elif not isinstance(text_color, Union[str, NoneType]):
-            raise TypeError('text_color should be a string.')
-        elif not isinstance(text_background_color, Union[str, NoneType]):
-            raise TypeError('text_background_color should be a string.')
-        elif not isinstance(text_effect, Union[str, NoneType]):
-            raise TypeError('text_effect should be a string.')
-
-        # Validate and process input values
-        for color, value in {
-            cls._TEXT_COLOR: text_color,
-            cls._TEXT_BACKGROUND_COLOR: text_background_color,
-            cls._TEXT_EFFECT: text_effect
-        }.items():
-            if value and color.startswith('text_col') and not TextColor.is_valid_color(value):
-                raise ValueError(f'TextColor "{value}" is an invalid value.')
-            elif value and color.startswith('text_bac') and not TextBackgroundColor.is_valid_color(value):
-                raise ValueError(f'TextBackgroundColor "{value}" is an invalid value.')
-            elif value and color.startswith('text_eff') and not TextEffect.is_valid_effect(value):
-                raise ValueError(f'TextEffect "{value}" is an invalid value.')
-
-        if not isinstance(keywords, (str, list)):
-            raise TypeError('Keywords should be either a string or list of strings.')
-        elif isinstance(keywords, list) and not all(isinstance(keyword, str) for keyword in keywords):
-            raise TypeError('Keywords should be either a string or list of strings.')
-
-        name_upper = name.upper()
-        if name_upper in cls._mappings:
-            cls._mappings[name_upper][cls._KEYWORDS] = [keywords] if isinstance(keywords, str) else keywords
-            cls._mappings[name_upper][cls._COLORIZATION] = {
-                cls._TEXT_COLOR: text_color,
-                cls._TEXT_BACKGROUND_COLOR: text_background_color,
-                cls._TEXT_EFFECT: text_effect
-            }
-        else:
-            cls._mappings[name_upper] = {
-                cls._KEYWORDS: [keywords] if isinstance(keywords, str) else keywords,
-                cls._COLORIZATION: {
-                    cls._TEXT_COLOR: text_color,
-                    cls._TEXT_BACKGROUND_COLOR: text_background_color,
-                    cls._TEXT_EFFECT: text_effect
-                }
-            }
 
 
 class FileMode:
@@ -2361,7 +2135,7 @@ def _create_default_handlers(
         level: int = None,
         format_str: str = None,
         date_format: str = None,
-        colorization: Colorization = None,
+        colorization=None,
         stream: Stream = None,
         encoding: str = None
 ) -> list:
@@ -2380,7 +2154,7 @@ def _create_default_handlers(
     :param date_format: The format string for formatting log message timestamps.
     :type date_format: str
     :param colorization: The colorization settings for log messages.
-    :type colorization: Colorization
+    :type colorization: pycolorecho.ColorMapper
     :param stream: The stream to log to, if not logging to a file.
     :type stream: Stream
     :param encoding: The encoding to use for the log file.
@@ -2388,6 +2162,8 @@ def _create_default_handlers(
     :return: A list containing the default handler configured based on the provided parameters.
     :rtype: list
     """
+    from pycolorecho import ColorMapper
+
     if not isinstance(file_name, Union[str, NoneType]):
         raise TypeError('file_name should be a string.')
     elif not isinstance(file_mode, Union[str, NoneType]):
@@ -2398,7 +2174,7 @@ def _create_default_handlers(
         raise TypeError('format_str should be a string.')
     elif not isinstance(date_format, Union[str, NoneType]):
         raise TypeError('date_format should be a string.')
-    elif not isinstance(colorization, Union[Colorization, NoneType]):
+    elif not isinstance(colorization, Union[ColorMapper, NoneType]):
         raise TypeError('colorization should be of Colorization type.')
     elif not isinstance(encoding, Union[str, NoneType]):
         raise TypeError('encoding should be a string.')
@@ -2464,7 +2240,7 @@ def load_config(
         date_format: str = DATE_FORMAT,
         stream: Stream = None,
         handlers: list = None,
-        colorization: Colorization = None,
+        colorization=None,
         encoding: str = 'UTF-8'
 ) -> None:
     """
@@ -2488,11 +2264,13 @@ def load_config(
     :param handlers: A list of handlers to configure. Defaults to None.
     :type handlers: list
     :param colorization: The colorization settings for log messages. Defaults to None.
-    :type colorization: Colorization
+    :type colorization: pycolorecho.ColorMapper
     :param encoding: The encoding to use for the log file. Defaults to 'UTF-8'.
     :type encoding: str
     :return: None
     """
+    from pycolorecho import ColorMapper
+
     if not isinstance(file_name, Union[str, NoneType]):
         raise TypeError('file_name should be a string.')
     elif not isinstance(file_mode, Union[str, NoneType]):
@@ -2505,7 +2283,7 @@ def load_config(
         raise TypeError('date_format should be a string.')
     elif not isinstance(handlers, Union[list, NoneType]):
         raise TypeError('handlers should be a list.')
-    elif not isinstance(colorization, Union[Colorization, NoneType]):
+    elif not isinstance(colorization, Union[ColorMapper, NoneType]):
         raise TypeError('colorization should be of Colorization type.')
     elif not isinstance(encoding, Union[str, NoneType]):
         raise TypeError('encoding should be a string.')

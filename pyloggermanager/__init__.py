@@ -1,6 +1,5 @@
 __all__ = [
     "CallerFrame",
-    "Colorization",
     "FileMode",
     "Lock",
     "LogLevel",
@@ -22,7 +21,6 @@ __all__ = [
     "formatters",
     "handlers",
     "streams",
-    "textstyles",
     "__author__",
     "__description__",
     "__name__",
@@ -47,11 +45,10 @@ resolution across development teams. Overall, the pyloggermanager package is an 
 to implement robust logging solutions, ensuring efficient and resilient application performance.
 """
 __name__ = "pyloggermanager"
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 from pyloggermanager import formatters
 from pyloggermanager import handlers
 from pyloggermanager import streams
-from pyloggermanager import textstyles
-from pyloggermanager.__main__ import CallerFrame, Colorization, FileMode, Lock, LogLevel, Record, Logger, Manager, \
+from pyloggermanager.__main__ import CallerFrame, FileMode, Lock, LogLevel, Record, Logger, Manager, \
     Registry, RootLogger, load_config, get_logger, critical, debug, error, info, warning, log, disable, shutdown

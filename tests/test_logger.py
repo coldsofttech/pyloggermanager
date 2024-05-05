@@ -7,6 +7,7 @@ import unittest
 from pyloggermanager import Logger, Manager, CallerFrame, Record
 from pyloggermanager.formatters import DefaultFormatter
 from pyloggermanager.handlers import FileHandler
+from utilityclass import UtilityClass
 
 
 class TestLogger(unittest.TestCase):
@@ -39,11 +40,14 @@ class TestLogger(unittest.TestCase):
 
     def test_init_valid(self):
         """Test if init method is initialized properly."""
-        logger = Logger(name='TestLogger')
-        expected_name = 'TestLogger'
-        expected_level = 20
-        self.assertEqual(expected_name, logger.name)
-        self.assertEqual(expected_level, logger.level)
+        try:
+            logger = Logger(name='TestLogger')
+            expected_name = 'TestLogger'
+            expected_level = 20
+            self.assertEqual(expected_name, logger.name)
+            self.assertEqual(expected_level, logger.level)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_init_invalid_name(self):
         """Test if init raises TypeError when invalid inputs are provided."""
@@ -156,20 +160,23 @@ class TestLogger(unittest.TestCase):
 
     def test__log_valid(self):
         """Test _log works as expected"""
-        formatter = DefaultFormatter()
-        handler = FileHandler(name='FileHandler')
-        handler.formatter = formatter
-        self.logger.add_handler(handler)
-        output_buffer = io.StringIO()
-        sys.stdout = output_buffer
-        self.logger._log(20, 'Test message', False)
-        sys.stdout = sys.__stdout__
-        expected_output = ' :: INFO :: Test message'
-        self.assertIn(expected_output, output_buffer.getvalue())
+        try:
+            formatter = DefaultFormatter()
+            handler = FileHandler(name='FileHandler')
+            handler.formatter = formatter
+            self.logger.add_handler(handler)
+            output_buffer = io.StringIO()
+            sys.stdout = output_buffer
+            self.logger._log(20, 'Test message', False)
+            sys.stdout = sys.__stdout__
+            expected_output = ' :: INFO :: Test message'
+            self.assertIn(expected_output, output_buffer.getvalue())
 
-        with open(handler.filename, 'r') as file:
-            file_content = file.read()
-            self.assertIn(expected_output, file_content)
+            with open(handler.filename, 'r') as file:
+                file_content = file.read()
+                self.assertIn(expected_output, file_content)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test__log_invalid_level(self):
         """Test if _log raises TypeError"""
@@ -207,9 +214,12 @@ class TestLogger(unittest.TestCase):
 
     def test_add_handler_valid(self):
         """Test if add handler works as expected"""
-        handler = FileHandler(name='FileHandler')
-        self.logger.add_handler(handler)
-        assert len(self.logger.handlers) > 0
+        try:
+            handler = FileHandler(name='FileHandler')
+            self.logger.add_handler(handler)
+            assert len(self.logger.handlers) > 0
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_add_handler_invalid(self):
         """Test if add handler raises TypeError"""
@@ -219,9 +229,12 @@ class TestLogger(unittest.TestCase):
 
     def test_call_handlers_valid(self):
         """Test if call handlers works as expected"""
-        handler = FileHandler(name='FileHandler')
-        self.logger.add_handler(handler)
-        self.logger.call_handlers(self.record, False)
+        try:
+            handler = FileHandler(name='FileHandler')
+            self.logger.add_handler(handler)
+            self.logger.call_handlers(self.record, False)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_call_handlers_invalid(self):
         """Test if call handlers raises TypeError"""
@@ -230,20 +243,23 @@ class TestLogger(unittest.TestCase):
 
     def test_critical_valid(self):
         """Test if critical works as expected"""
-        formatter = DefaultFormatter()
-        handler = FileHandler()
-        handler.formatter = formatter
-        self.logger.add_handler(handler)
-        output_buffer = io.StringIO()
-        sys.stdout = output_buffer
-        self.logger.critical('Test critical message', False)
-        sys.stdout = sys.__stdout__
-        expected_output = ' :: CRITICAL :: Test critical message'
-        self.assertIn(expected_output, output_buffer.getvalue())
+        try:
+            formatter = DefaultFormatter()
+            handler = FileHandler()
+            handler.formatter = formatter
+            self.logger.add_handler(handler)
+            output_buffer = io.StringIO()
+            sys.stdout = output_buffer
+            self.logger.critical('Test critical message', False)
+            sys.stdout = sys.__stdout__
+            expected_output = ' :: CRITICAL :: Test critical message'
+            self.assertIn(expected_output, output_buffer.getvalue())
 
-        with open(handler.filename, 'r') as file:
-            file_content = file.read()
-            self.assertIn(expected_output, file_content)
+            with open(handler.filename, 'r') as file:
+                file_content = file.read()
+                self.assertIn(expected_output, file_content)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_critical_invalid_message(self):
         """Test if critical raises TypeError"""
@@ -276,22 +292,25 @@ class TestLogger(unittest.TestCase):
 
     def test_debug_valid(self):
         """Test if debug works as expected"""
-        formatter = DefaultFormatter()
-        handler = FileHandler(level=10)
-        handler.formatter = formatter
-        self.logger.level = 10
-        self.logger.add_handler(handler)
-        output_buffer = io.StringIO()
-        sys.stdout = output_buffer
-        self.logger.debug('Test debug message', False)
-        sys.stdout = sys.__stdout__
-        expected_output_console = ''
-        expected_output_file = ' :: DEBUG :: Test debug message'
-        self.assertIn(expected_output_console, output_buffer.getvalue())
+        try:
+            formatter = DefaultFormatter()
+            handler = FileHandler(level=10)
+            handler.formatter = formatter
+            self.logger.level = 10
+            self.logger.add_handler(handler)
+            output_buffer = io.StringIO()
+            sys.stdout = output_buffer
+            self.logger.debug('Test debug message', False)
+            sys.stdout = sys.__stdout__
+            expected_output_console = ''
+            expected_output_file = ' :: DEBUG :: Test debug message'
+            self.assertIn(expected_output_console, output_buffer.getvalue())
 
-        with open(handler.filename, 'r') as file:
-            file_content = file.read()
-            self.assertIn(expected_output_file, file_content)
+            with open(handler.filename, 'r') as file:
+                file_content = file.read()
+                self.assertIn(expected_output_file, file_content)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_debug_invalid_message(self):
         """Test if debug raises TypeError"""
@@ -329,20 +348,23 @@ class TestLogger(unittest.TestCase):
 
     def test_info_valid(self):
         """Test if info works as expected"""
-        formatter = DefaultFormatter()
-        handler = FileHandler()
-        handler.formatter = formatter
-        self.logger.add_handler(handler)
-        output_buffer = io.StringIO()
-        sys.stdout = output_buffer
-        self.logger.info('Test info message', False)
-        sys.stdout = sys.__stdout__
-        expected_output = ' :: INFO :: Test info message'
-        self.assertIn(expected_output, output_buffer.getvalue())
+        try:
+            formatter = DefaultFormatter()
+            handler = FileHandler()
+            handler.formatter = formatter
+            self.logger.add_handler(handler)
+            output_buffer = io.StringIO()
+            sys.stdout = output_buffer
+            self.logger.info('Test info message', False)
+            sys.stdout = sys.__stdout__
+            expected_output = ' :: INFO :: Test info message'
+            self.assertIn(expected_output, output_buffer.getvalue())
 
-        with open(handler.filename, 'r') as file:
-            file_content = file.read()
-            self.assertIn(expected_output, file_content)
+            with open(handler.filename, 'r') as file:
+                file_content = file.read()
+                self.assertIn(expected_output, file_content)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_info_invalid_message(self):
         """Test if info raises TypeError"""
@@ -375,20 +397,23 @@ class TestLogger(unittest.TestCase):
 
     def test_warning_valid(self):
         """Test if warning works as expected"""
-        formatter = DefaultFormatter()
-        handler = FileHandler()
-        handler.formatter = formatter
-        self.logger.add_handler(handler)
-        output_buffer = io.StringIO()
-        sys.stdout = output_buffer
-        self.logger.warning('Test warning message', False)
-        sys.stdout = sys.__stdout__
-        expected_output = ' :: WARNING :: Test warning message'
-        self.assertIn(expected_output, output_buffer.getvalue())
+        try:
+            formatter = DefaultFormatter()
+            handler = FileHandler()
+            handler.formatter = formatter
+            self.logger.add_handler(handler)
+            output_buffer = io.StringIO()
+            sys.stdout = output_buffer
+            self.logger.warning('Test warning message', False)
+            sys.stdout = sys.__stdout__
+            expected_output = ' :: WARNING :: Test warning message'
+            self.assertIn(expected_output, output_buffer.getvalue())
 
-        with open(handler.filename, 'r') as file:
-            file_content = file.read()
-            self.assertIn(expected_output, file_content)
+            with open(handler.filename, 'r') as file:
+                file_content = file.read()
+                self.assertIn(expected_output, file_content)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_warning_invalid_message(self):
         """Test if warning raises TypeError"""
@@ -421,20 +446,23 @@ class TestLogger(unittest.TestCase):
 
     def test_error_valid(self):
         """Test if error works as expected"""
-        formatter = DefaultFormatter()
-        handler = FileHandler()
-        handler.formatter = formatter
-        self.logger.add_handler(handler)
-        output_buffer = io.StringIO()
-        sys.stdout = output_buffer
-        self.logger.error('Test error message', False)
-        sys.stdout = sys.__stdout__
-        expected_output = ' :: ERROR :: Test error message'
-        self.assertIn(expected_output, output_buffer.getvalue())
+        try:
+            formatter = DefaultFormatter()
+            handler = FileHandler()
+            handler.formatter = formatter
+            self.logger.add_handler(handler)
+            output_buffer = io.StringIO()
+            sys.stdout = output_buffer
+            self.logger.error('Test error message', False)
+            sys.stdout = sys.__stdout__
+            expected_output = ' :: ERROR :: Test error message'
+            self.assertIn(expected_output, output_buffer.getvalue())
 
-        with open(handler.filename, 'r') as file:
-            file_content = file.read()
-            self.assertIn(expected_output, file_content)
+            with open(handler.filename, 'r') as file:
+                file_content = file.read()
+                self.assertIn(expected_output, file_content)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_error_invalid_message(self):
         """Test if error raises TypeError"""
@@ -467,20 +495,23 @@ class TestLogger(unittest.TestCase):
 
     def test_log_valid(self):
         """Test if log works as expected"""
-        formatter = DefaultFormatter()
-        handler = FileHandler()
-        handler.formatter = formatter
-        self.logger.add_handler(handler)
-        output_buffer = io.StringIO()
-        sys.stdout = output_buffer
-        self.logger.log(20, 'Test info message', False)
-        sys.stdout = sys.__stdout__
-        expected_output = ' :: INFO :: Test info message'
-        self.assertIn(expected_output, output_buffer.getvalue())
+        try:
+            formatter = DefaultFormatter()
+            handler = FileHandler()
+            handler.formatter = formatter
+            self.logger.add_handler(handler)
+            output_buffer = io.StringIO()
+            sys.stdout = output_buffer
+            self.logger.log(20, 'Test info message', False)
+            sys.stdout = sys.__stdout__
+            expected_output = ' :: INFO :: Test info message'
+            self.assertIn(expected_output, output_buffer.getvalue())
 
-        with open(handler.filename, 'r') as file:
-            file_content = file.read()
-            self.assertIn(expected_output, file_content)
+            with open(handler.filename, 'r') as file:
+                file_content = file.read()
+                self.assertIn(expected_output, file_content)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_log_invalid_level(self):
         """Test if log raises TypeError"""
@@ -539,19 +570,25 @@ class TestLogger(unittest.TestCase):
 
     def test_get_child_valid(self):
         """Test if the get child works as expected"""
-        root_logger = Logger(name='root')
-        self.logger.name = 'child1'
-        self.logger.root = root_logger
-        child = self.logger.get_child('child2')
-        self.assertEqual('child1.child2', child.name)
+        try:
+            root_logger = Logger(name='root')
+            self.logger.name = 'child1'
+            self.logger.root = root_logger
+            child = self.logger.get_child('child2')
+            self.assertEqual('child1.child2', child.name)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_get_child_invalid(self):
         """Test if the get child raises TypeError"""
-        root_logger = Logger(name='root')
-        self.logger.name = 'child1'
-        self.logger.root = root_logger
-        with self.assertRaises(TypeError):
-            self.logger.get_child(100)
+        try:
+            root_logger = Logger(name='root')
+            self.logger.name = 'child1'
+            self.logger.root = root_logger
+            with self.assertRaises(TypeError):
+                self.logger.get_child(100)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_get_effective_level(self):
         """Test if the get effective level works as expected"""
@@ -559,11 +596,14 @@ class TestLogger(unittest.TestCase):
 
     def test_handle_valid(self):
         """Test if handle works as expected"""
-        handler = FileHandler()
-        formatter = DefaultFormatter()
-        handler.formatter = formatter
-        self.logger.add_handler(handler)
-        self.logger.handle(self.record, False)
+        try:
+            handler = FileHandler()
+            formatter = DefaultFormatter()
+            handler.formatter = formatter
+            self.logger.add_handler(handler)
+            self.logger.handle(self.record, False)
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_handle_invalid_record(self):
         """Test if handle raises TypeError"""
@@ -581,11 +621,14 @@ class TestLogger(unittest.TestCase):
 
     def test_has_handlers_valid(self):
         """Test if the has handlers works as expected"""
-        handler = FileHandler()
-        formatter = DefaultFormatter()
-        handler.formatter = formatter
-        self.logger.add_handler(handler)
-        self.assertTrue(self.logger.has_handlers())
+        try:
+            handler = FileHandler()
+            formatter = DefaultFormatter()
+            handler.formatter = formatter
+            self.logger.add_handler(handler)
+            self.assertTrue(self.logger.has_handlers())
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_is_enabled_for_disabled(self):
         """Test if is enabled for works as expected"""
@@ -621,10 +664,13 @@ class TestLogger(unittest.TestCase):
 
     def test_remove_handler_valid(self):
         """Test if remove handler works as expected"""
-        handler = FileHandler(name='FileHandler')
-        self.logger.add_handler(handler)
-        self.logger.remove_handler(handler)
-        assert len(self.logger.handlers) == 0
+        try:
+            handler = FileHandler(name='FileHandler')
+            self.logger.add_handler(handler)
+            self.logger.remove_handler(handler)
+            assert len(self.logger.handlers) == 0
+        finally:
+            UtilityClass.delete_file('default.log')
 
     def test_remove_handler_empty(self):
         """Test if remove handler works as expected"""

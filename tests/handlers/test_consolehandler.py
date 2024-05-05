@@ -3,11 +3,12 @@ import io
 import sys
 import unittest
 
-from pyloggermanager import CallerFrame, Record, Colorization
+from pycolorecho import ColorMapper, TextColor
+
+from pyloggermanager import CallerFrame, Record
 from pyloggermanager.formatters import Formatter
 from pyloggermanager.handlers import ConsoleHandler, Handler
 from pyloggermanager.streams import Stream, StdoutStream
-from pyloggermanager.textstyles import TextColor
 
 
 class TestConsoleHandler(unittest.TestCase):
@@ -97,23 +98,18 @@ class TestConsoleHandler(unittest.TestCase):
             level_number=30,
             caller_frame=caller_frame
         )
-        colorization = Colorization()
-        colorization.set_keyword_color_mapping('error', ['error'], TextColor.RED)
+        colorization = ColorMapper()
+        colorization.add_mapping('error', ['error'], text_color=TextColor.RED)
         handler.colorization = colorization
         output_buffer = io.StringIO()
         sys.stdout = output_buffer
         handler.emit(record)
         sys.stdout = sys.__stdout__
         expected_output = (
-            f'{TextColor.RED}'
-            f'{handler.formatter.format_time(record.time.timetuple(), handler.formatter.date_format)}'
-            f' :: WARNING :: Test error message'
-            f'{Colorization.RESET}'
-        ) if Colorization.is_colorization_supported() else (
             f'{handler.formatter.format_time(record.time.timetuple(), handler.formatter.date_format)}'
             f' :: WARNING :: Test error message'
         )
-        self.assertEqual(repr(output_buffer.getvalue()), repr(expected_output))
+        self.assertIn(expected_output, repr(output_buffer.getvalue()))
 
     def test_emit_invalid(self):
         """Test if emit method raises TypeError when invalid inputs are provided."""

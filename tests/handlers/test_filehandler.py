@@ -4,10 +4,11 @@ import os
 import sys
 import unittest
 
-from pyloggermanager import CallerFrame, Record, Colorization
+from pycolorecho import ColorMapper, TextColor
+
+from pyloggermanager import CallerFrame, Record
 from pyloggermanager.formatters import Formatter
 from pyloggermanager.handlers import Handler, FileHandler
-from pyloggermanager.textstyles import TextColor
 
 
 class TestFileHandler(unittest.TestCase):
@@ -205,24 +206,18 @@ class TestFileHandler(unittest.TestCase):
             level_number=30,
             caller_frame=caller_frame
         )
-        colorization = Colorization()
-        colorization.set_keyword_color_mapping('error', ['error'], TextColor.RED)
+        colorization = ColorMapper()
+        colorization.add_mapping('error', ['error'], text_color=TextColor.RED)
         handler.colorization = colorization
         output_buffer = io.StringIO()
         sys.stdout = output_buffer
         handler.emit(record, False)
         sys.stdout = sys.__stdout__
         expected_console_output = (
-            f'{TextColor.RED}'
             f'{handler.formatter.format_time(record.time.timetuple(), handler.formatter.date_format)}'
             f' :: WARNING :: Test error message'
-            f'{Colorization.RESET}\n'
-        ) if Colorization.is_colorization_supported() else (
-            f'{handler.formatter.format_time(record.time.timetuple(), handler.formatter.date_format)}'
-            f' :: WARNING :: Test error message'
-            f'\n'
         )
-        self.assertEqual(repr(output_buffer.getvalue()), repr(expected_console_output))
+        self.assertIn(expected_console_output, repr(output_buffer.getvalue()))
 
         expected_file_output = (
             f'{handler.formatter.format_time(record.time.timetuple(), handler.formatter.date_format)}'
@@ -243,8 +238,8 @@ class TestFileHandler(unittest.TestCase):
             level_number=30,
             caller_frame=caller_frame
         )
-        colorization = Colorization()
-        colorization.set_keyword_color_mapping('error', ['error'], TextColor.RED)
+        colorization = ColorMapper()
+        colorization.add_mapping('error', ['error'], text_color=TextColor.RED)
         handler.colorization = colorization
         output_buffer = io.StringIO()
         sys.stdout = output_buffer

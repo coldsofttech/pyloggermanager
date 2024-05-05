@@ -1,28 +1,14 @@
 import io
-import os
 import sys
 import unittest
 
 import pytest
 
 import pyloggermanager
-from pyloggermanager.handlers import FileHandler
 from utilityclass import UtilityClass
 
 
 class TestPyLoggerManagerDebug(unittest.TestCase):
-    @staticmethod
-    def cleanup(logger):
-        """Clean up method"""
-        for handler in logger.handlers:
-            handler.close()
-            if handler is FileHandler:
-                try:
-                    file_name = str(handler.filename)
-                    os.remove(file_name)
-                except (FileNotFoundError, PermissionError, IsADirectoryError):
-                    pass
-
     def setUp(self) -> None:
         self.exec_info = (ValueError, ValueError('Test error'), None)
 
@@ -32,8 +18,8 @@ class TestPyLoggerManagerDebug(unittest.TestCase):
     @pytest.mark.sequential_order
     def test_debug_valid(self):
         """Test if debug works as expected"""
+        file_name = UtilityClass.generate_name()
         try:
-            file_name = UtilityClass.generate_name()
             pyloggermanager.load_config(file_name=file_name, level=10)
             output_buffer = io.StringIO()
             sys.stdout = output_buffer
@@ -49,51 +35,67 @@ class TestPyLoggerManagerDebug(unittest.TestCase):
                 file_content = file.read()
                 self.assertIn(expected_output_file, file_content)
         finally:
-            self.cleanup(pyloggermanager.get_logger())
+            pyloggermanager.shutdown()
+            UtilityClass.delete_file(file_name)
 
     @pytest.mark.sequential_order
     def test_debug_invalid_message(self):
         """Test if debug raises TypeError"""
         file_name = UtilityClass.generate_name()
-        pyloggermanager.load_config(file_name=file_name, level=10)
-        with self.assertRaises(TypeError):
-            pyloggermanager.debug(200)
+        try:
+            pyloggermanager.load_config(file_name=file_name, level=10)
+            with self.assertRaises(TypeError):
+                pyloggermanager.debug(200)
+        finally:
+            UtilityClass.delete_file(file_name)
 
     @pytest.mark.sequential_order
     def test_debug_invalid_ignore_display(self):
         """Test if debug raises TypeError"""
         file_name = UtilityClass.generate_name()
-        pyloggermanager.load_config(file_name=file_name, level=10)
-        with self.assertRaises(TypeError):
-            pyloggermanager.debug('Test message', ignore_display=200)
+        try:
+            pyloggermanager.load_config(file_name=file_name, level=10)
+            with self.assertRaises(TypeError):
+                pyloggermanager.debug('Test message', ignore_display=200)
+        finally:
+            UtilityClass.delete_file(file_name)
 
     @pytest.mark.sequential_order
     def test_debug_invalid_exec_info(self):
         """Test if debug raises TypeError"""
         file_name = UtilityClass.generate_name()
-        pyloggermanager.load_config(file_name=file_name, level=10)
-        with self.assertRaises(TypeError):
-            pyloggermanager.debug('Test message', False, {'dict'})
+        try:
+            pyloggermanager.load_config(file_name=file_name, level=10)
+            with self.assertRaises(TypeError):
+                pyloggermanager.debug('Test message', False, {'dict'})
+        finally:
+            UtilityClass.delete_file(file_name)
 
     @pytest.mark.sequential_order
     def test_debug_invalid_stack_info(self):
         """Test if debug raises TypeError"""
         file_name = UtilityClass.generate_name()
-        pyloggermanager.load_config(file_name=file_name, level=10)
-        with self.assertRaises(TypeError):
-            pyloggermanager.debug(
-                'Test message', False, self.exec_info, 'dict'
-            )
+        try:
+            pyloggermanager.load_config(file_name=file_name, level=10)
+            with self.assertRaises(TypeError):
+                pyloggermanager.debug(
+                    'Test message', False, self.exec_info, 'dict'
+                )
+        finally:
+            UtilityClass.delete_file(file_name)
 
     @pytest.mark.sequential_order
     def test_debug_invalid_stack_level(self):
         """Test if debug raises TypeError"""
         file_name = UtilityClass.generate_name()
-        pyloggermanager.load_config(file_name=file_name, level=10)
-        with self.assertRaises(TypeError):
-            pyloggermanager.debug(
-                'Test message', False, self.exec_info, 'StackInfo', 'level'
-            )
+        try:
+            pyloggermanager.load_config(file_name=file_name, level=10)
+            with self.assertRaises(TypeError):
+                pyloggermanager.debug(
+                    'Test message', False, self.exec_info, 'StackInfo', 'level'
+                )
+        finally:
+            UtilityClass.delete_file(file_name)
 
 
 if __name__ == "__main__":
