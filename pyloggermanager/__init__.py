@@ -45,7 +45,7 @@ resolution across development teams. Overall, the pyloggermanager package is an 
 to implement robust logging solutions, ensuring efficient and resilient application performance.
 """
 __name__ = "pyloggermanager"
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 from pyloggermanager import formatters
 from pyloggermanager import handlers
